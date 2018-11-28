@@ -150,12 +150,11 @@ public class AutonDelft extends LinearOpMode {
         sleep(500);
         Box.setPosition(0.4);
         sleep(1000);
-        EncoderLift(0.5, -8, 3);
-        ArmL.setPosition(0.9);
-        ArmR.setPosition(0.1);
+        //EncoderLift(0.5, -8, 3);
         encoderDrive(0.5, 6, 6, 2);
-        encoderDrive(0.5, -6.5, 6.5, 2);
-        EncoderLift(0.5, 16, 3);
+        encoderDrive(0.5, -8, 8, 2);
+        encoderDrive(0.5, 10, 10, 2);
+        //EncoderLift(0.5, 16, 3);
         if(opModeIsActive()) {
             if(tfod != null) {
                 tfod.activate();
@@ -166,32 +165,29 @@ public class AutonDelft extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if(updatedRecognitions != null) {
-                        if (updatedRecognitions.size() == 2) {
+                        if (updatedRecognitions.size() == 1) {
                             int goldMineralX = -1;
                             int silverMineral1X = -1;
                             int silverMineral2X = -1;
                             for (Recognition recognition : updatedRecognitions) {
-                                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                    goldMineralX = (int) recognition.getLeft();
-                                } else if (silverMineral1X == -1) {
-                                    silverMineral1X = (int) recognition.getLeft();
-                                } else {
-                                    silverMineral2X = (int) recognition.getLeft();
+                                if(GoldPos == null) {
+                                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                        GoldPos = "left";
+                                    }
+                                    else if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                        GoldPos = "notLeft";
+                                        encoderDrive(0.5, -10, -10, 2);
+                                        encoderDrive(0.5, 8, -8, 2);
+                                        encoderDrive(0.5, 10, 10, 2);
+                                    }
                                 }
-                            }
-                            if (goldMineralX == -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                                GoldPos = "right";
-                                telemetry.addData("Gold position", "right");
-                            }
-                            else if (goldMineralX != -1 && silverMineral1X != -1) {
-
-                                if (goldMineralX > silverMineral1X) {
-                                    GoldPos = "center";
-                                    telemetry.addData("Gold position", "center");
-                                }
-                                else {
-                                    GoldPos = "left";
-                                    telemetry.addData("Gold position", "left");
+                                else if(GoldPos == "notLeft") {
+                                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                        GoldPos = "center";
+                                    }
+                                    else if(recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                        GoldPos = "right";
+                                    }
                                 }
                             }
                         }
@@ -201,58 +197,14 @@ public class AutonDelft extends LinearOpMode {
                 }
                 if(GoldPos != null) {
                     if(GoldPos.equals("left")) {
-                        ArmL.setPosition(0.9);
-                        ArmR.setPosition(0.1);
-                        sleep(500);
-                        IntakeSpin.setPower(0.5);
-                        encoderDrive(0.5, 5, 5, 2);
-                        //encoderDrive(0.5, -5, -5, 2);
-                        IntakeSpin.setPower(0);
-                        ArmL.setPosition(0.6);
-                        ArmR.setPosition(0.4);
-                        sleep(500);
                         encoderDrive(0.5, 10, 10, 2);
-                        encoderDrive(0.5, 5, -5, 2);
-                        encoderDrive(0.5, 5, 5, 2);
-                        ArmL.setPosition(0.9);
-                        ArmR.setPosition(0.1);
-                        isGoldKnocked = true;
+                        encoderDrive(0.5, 10, -10, 2);
+                        encoderDrive(0.5, 5, 5, 1);
                     }
                     else if(GoldPos.equals("right")) {
-                        encoderDrive(0.5, 14, -14, 2);
-                        ArmL.setPosition(0.8);
-                        ArmR.setPosition(0.2);
-                        sleep(500);
-                        IntakeSpin.setPower(0.5);
-                        encoderDrive(0.5, 5, 5, 2);
-                        //encoderDrive(0.5, -5, -5, 2);
-                        IntakeSpin.setPower(0);
-                        ArmL.setPosition(0.6);
-                        ArmR.setPosition(0.4);
-                        sleep(500);
-                        encoderDrive(0.5, 8, 8, 2);
-                        encoderDrive(0.5, -5, -5, 2);
-                        encoderDrive(0.5, 4, 4, 2);
-                        ArmL.setPosition(0.8);
-                        ArmR.setPosition(0.2);
-                        isGoldKnocked = true;
+                        encoderDrive(0.5, 15, 15, 2);
                     }
                     else if(GoldPos.equals("center")) {
-                        encoderDrive(0.5, 6.5, -6.5, 2);
-                        ArmL.setPosition(0.9);
-                        ArmR.setPosition(0.1);
-                        sleep(500);
-                        IntakeSpin.setPower(0.5);
-                        encoderDrive(0.5, 5, 5, 2);
-                        //encoderDrive(0.5, -5, -5, 2);
-                        IntakeSpin.setPower(0);
-                        ArmL.setPosition(0.6);
-                        ArmR.setPosition(0.4);
-                        sleep(500);
-                        encoderDrive(0.5, 10, 10, 2);
-                        ArmL.setPosition(0.8);
-                        ArmR.setPosition(0.2);
-                        isGoldKnocked = true;
                     }
                 }
 
