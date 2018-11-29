@@ -70,9 +70,9 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonDelft", group="Pushbot")
+@Autonomous(name="AutonomousBasis", group="Pushbot")
 //@Disabled
-public class AutonDelft extends LinearOpMode {
+public class AutonomousBasis extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -95,9 +95,10 @@ public class AutonDelft extends LinearOpMode {
     private String GoldPos;
     private boolean isGoldKnocked = false;
 
-    static final double     COUNTS_PER_MOTOR_REV    = 288 ;    // REV core hex motor
+    static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // REV HD hex motor
+    static final double     DRIVE_GEAR_REDUCTION    = 1.5 ;
     static final double     WHEEL_DIAMETER_CM       = 10.16 ;     // For figuring circumference
-    static final double     COUNTS_PER_CM           = COUNTS_PER_MOTOR_REV /
+    static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
 
     static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;    // 2240 / (1.4 * 3.1415)
@@ -125,8 +126,8 @@ public class AutonDelft extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        LeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        RightDrive.setDirection(DcMotor.Direction.FORWARD);
+        LeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        RightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         LeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
