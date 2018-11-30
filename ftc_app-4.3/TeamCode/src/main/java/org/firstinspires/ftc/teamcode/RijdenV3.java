@@ -100,8 +100,8 @@ public class RijdenV3 extends OpMode
         BoxTgtPos = -0.7;
 
         // Reverse the motor that runs backwards
-        LeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        RightDrive.setDirection(DcMotor.Direction.FORWARD);
+        LeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        RightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");

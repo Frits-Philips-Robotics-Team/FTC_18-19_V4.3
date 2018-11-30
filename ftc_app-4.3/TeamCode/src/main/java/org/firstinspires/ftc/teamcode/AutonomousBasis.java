@@ -96,7 +96,7 @@ public class AutonomousBasis extends LinearOpMode {
     private boolean isGoldKnocked = false;
 
     static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // REV HD hex motor
-    static final double     DRIVE_GEAR_REDUCTION    = 1.5 ;
+    static final double     DRIVE_GEAR_REDUCTION    = 0.66666667 ;
     static final double     WHEEL_DIAMETER_CM       = 10.16 ;     // For figuring circumference
     static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
@@ -146,15 +146,13 @@ public class AutonomousBasis extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        ArmL.setPosition(0.6);
-        ArmR.setPosition(0.4);
-        sleep(500);
-        Box.setPosition(0.4);
-        sleep(1000);
+//        ArmL.setPosition(0.6);
+//        ArmR.setPosition(0.4);
+//        sleep(500);
+//        Box.setPosition(0.4);
+//        sleep(1000);
         //EncoderLift(0.5, -8, 3);
-        encoderDrive(0.5, 6, 6, 2);
-        encoderDrive(0.5, -8, 8, 2);
-        encoderDrive(0.5, 10, 10, 2);
+       // encoderDrive(0.75, 5, 5, 1);
         //EncoderLift(0.5, 16, 3);
         if(opModeIsActive()) {
             if(tfod != null) {
@@ -167,27 +165,28 @@ public class AutonomousBasis extends LinearOpMode {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if(updatedRecognitions != null) {
                         if (updatedRecognitions.size() == 1) {
-                            int goldMineralX = -1;
-                            int silverMineral1X = -1;
-                            int silverMineral2X = -1;
                             for (Recognition recognition : updatedRecognitions) {
                                 if(GoldPos == null) {
                                     if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                        GoldPos = "left";
+                                        GoldPos = "center";
+                                        telemetry.addData("GoldPos: ", "center");
                                     }
                                     else if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
-                                        GoldPos = "notLeft";
-                                        encoderDrive(0.5, -10, -10, 2);
-                                        encoderDrive(0.5, 8, -8, 2);
-                                        encoderDrive(0.5, 10, 10, 2);
+                                        encoderDrive(0.75, 8, 8, 2);
+                                        encoderDrive(0.75, -7, 7, 2);
+                                        encoderDrive(0.75, 8, 8, 2);
+                                        GoldPos = "notCenter";
+                                        telemetry.addData("GoldPos: ", "NotCenter");
                                     }
                                 }
-                                else if(GoldPos == "notLeft") {
+                                else if(GoldPos.equals("notCenter")) {
                                     if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                        GoldPos = "center";
+                                        GoldPos = "left";
+                                        telemetry.addData("GoldPos: ", "Left");
                                     }
                                     else if(recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
                                         GoldPos = "right";
+                                        telemetry.addData("GoldPos: ", "Right");
                                     }
                                 }
                             }
@@ -198,14 +197,22 @@ public class AutonomousBasis extends LinearOpMode {
                 }
                 if(GoldPos != null) {
                     if(GoldPos.equals("left")) {
-                        encoderDrive(0.5, 10, 10, 2);
-                        encoderDrive(0.5, 10, -10, 2);
-                        encoderDrive(0.5, 5, 5, 1);
+                        encoderDrive(0.75, 60, 60, 5);
+                        encoderDrive(0.75, 12, -12, 2);
+                        encoderDrive(0.75, 20, 20, 3);
+                        isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
-                        encoderDrive(0.5, 15, 15, 2);
+                        encoderDrive(0.75, -8, -8, 2);
+                        encoderDrive(0.75, 14, -14, 2);
+                        encoderDrive(0.75, 60, 60,5);
+                        encoderDrive(0.75, -12, 12, 2);
+                        encoderDrive(0.75, 20, 20, 3);
+                        isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("center")) {
+                        encoderDrive(0.75, 75, 75, 6);
+                        isGoldKnocked = true;
                     }
                 }
 
