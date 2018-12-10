@@ -101,7 +101,10 @@ public class AutonomousBasis extends LinearOpMode {
     static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
 
-    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;    // 2240 / (1.4 * 3.1415)
+    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;    //TODO: change to core hex motor 2240 / (1.4 * 3.1415)
+
+    static final double     DRIVE_SPEED             = 0.2;
+    static final double     TURN_SPEED              = 0.05;
 
     @Override
     public void runOpMode() {
@@ -152,7 +155,9 @@ public class AutonomousBasis extends LinearOpMode {
 //        Box.setPosition(0.4);
 //        sleep(1000);
         //EncoderLift(0.5, -8, 3);
-       // encoderDrive(0.75, 5, 5, 1);
+       encoderDrive(DRIVE_SPEED, 16, 16, 2);
+       encoderDrive(TURN_SPEED, 5, -5, 2);
+       encoderDrive(DRIVE_SPEED, 6, 6, 2);
         //EncoderLift(0.5, 16, 3);
         if(opModeIsActive()) {
             if(tfod != null) {
@@ -167,26 +172,30 @@ public class AutonomousBasis extends LinearOpMode {
                         if (updatedRecognitions.size() == 1) {
                             for (Recognition recognition : updatedRecognitions) {
                                 if(GoldPos == null) {
+                                    if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                                        GoldPos = "notRight";
+                                        telemetry.addData("GoldPos: ", "notRight");
+                                        encoderDrive(DRIVE_SPEED, -8, -8, 2);
+                                        encoderDrive(TURN_SPEED, -6, 6, 2);
+                                        encoderDrive(DRIVE_SPEED, 3, 3, 2);
+                                        sleep(500);
+                                    }
+                                    else if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                        GoldPos = "right";
+                                        telemetry.addData("GoldPos: ", "right");
+                                        sleep(500);
+                                    }
+                                }
+                                else if(GoldPos.equals("notRight")) {
                                     if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                                         GoldPos = "center";
                                         telemetry.addData("GoldPos: ", "center");
-                                    }
-                                    else if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
-                                        encoderDrive(0.75, 8, 8, 2);
-                                        encoderDrive(0.75, -7, 7, 2);
-                                        encoderDrive(0.75, 8, 8, 2);
-                                        GoldPos = "notCenter";
-                                        telemetry.addData("GoldPos: ", "NotCenter");
-                                    }
-                                }
-                                else if(GoldPos.equals("notCenter")) {
-                                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                        GoldPos = "left";
-                                        telemetry.addData("GoldPos: ", "Left");
+                                        sleep(500);
                                     }
                                     else if(recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
-                                        GoldPos = "right";
-                                        telemetry.addData("GoldPos: ", "Right");
+                                        GoldPos = "left";
+                                        telemetry.addData("GoldPos: ", "left");
+                                        sleep(500);
                                     }
                                 }
                             }
@@ -197,21 +206,23 @@ public class AutonomousBasis extends LinearOpMode {
                 }
                 if(GoldPos != null) {
                     if(GoldPos.equals("left")) {
-                        encoderDrive(0.75, 60, 60, 5);
-                        encoderDrive(0.75, 12, -12, 2);
-                        encoderDrive(0.75, 20, 20, 3);
+                        encoderDrive(DRIVE_SPEED, -10, -10, 2);
+                        encoderDrive(TURN_SPEED, -5, 5, 2);
+                        encoderDrive(DRIVE_SPEED, 60, 60, 5);
+                        encoderDrive(TURN_SPEED, 12, -12, 2);
+                        encoderDrive(DRIVE_SPEED, 20, 20, 3);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
-                        encoderDrive(0.75, -8, -8, 2);
-                        encoderDrive(0.75, 14, -14, 2);
-                        encoderDrive(0.75, 60, 60,5);
-                        encoderDrive(0.75, -12, 12, 2);
-                        encoderDrive(0.75, 20, 20, 3);
+                        encoderDrive(TURN_SPEED, 5, -5, 2);
+                        encoderDrive(DRIVE_SPEED, 20, 20,5);
+                        encoderDrive(TURN_SPEED, -10, 10, 2);
+                        encoderDrive(DRIVE_SPEED, 20, 20, 3);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("center")) {
-                        encoderDrive(0.75, 75, 75, 6);
+                        encoderDrive(TURN_SPEED, -2, 2, 2);
+                        encoderDrive(DRIVE_SPEED, 40, 40, 6);
                         isGoldKnocked = true;
                     }
                 }
@@ -268,7 +279,7 @@ public class AutonomousBasis extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < TimeoutS) &&
-                    (LeftDrive.isBusy() && RightDrive.isBusy())) {
+                    (LeftDrive.isBusy() || RightDrive.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
@@ -276,7 +287,7 @@ public class AutonomousBasis extends LinearOpMode {
                         LeftDrive.getCurrentPosition(),
                         RightDrive.getCurrentPosition());
                 telemetry.update();
-            }
+        }
 
             // Stop all motion;
             LeftDrive.setPower(0);
@@ -286,7 +297,7 @@ public class AutonomousBasis extends LinearOpMode {
             LeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            //  sleep(250);   // optional pause after each move
+            sleep(250);   // optional pause after each move
         }
     }
     public void EncoderLift(double speed, double cm, double TimeoutS) {
