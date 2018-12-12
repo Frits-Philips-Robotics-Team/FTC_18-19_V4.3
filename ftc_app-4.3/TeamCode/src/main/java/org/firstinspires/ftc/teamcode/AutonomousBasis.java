@@ -104,7 +104,7 @@ public class AutonomousBasis extends LinearOpMode {
     static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;    //TODO: change to core hex motor 2240 / (1.4 * 3.1415)
 
     static final double     DRIVE_SPEED             = 0.2;
-    static final double     TURN_SPEED              = 0.05;
+    static final double     TURN_SPEED              = 0.1;
 
     @Override
     public void runOpMode() {
@@ -176,7 +176,7 @@ public class AutonomousBasis extends LinearOpMode {
                                         GoldPos = "notRight";
                                         telemetry.addData("GoldPos: ", "notRight");
                                         encoderDrive(DRIVE_SPEED, -8, -8, 2);
-                                        encoderDrive(TURN_SPEED, -6, 6, 2);
+                                        encoderDrive(TURN_SPEED, -6, 6, 4);
                                         encoderDrive(DRIVE_SPEED, 3, 3, 2);
                                         sleep(500);
                                     }
@@ -207,22 +207,24 @@ public class AutonomousBasis extends LinearOpMode {
                 if(GoldPos != null) {
                     if(GoldPos.equals("left")) {
                         encoderDrive(DRIVE_SPEED, -10, -10, 2);
-                        encoderDrive(TURN_SPEED, -5, 5, 2);
+                        encoderDrive(TURN_SPEED, -5, 5, 3);
                         encoderDrive(DRIVE_SPEED, 60, 60, 5);
-                        encoderDrive(TURN_SPEED, 12, -12, 2);
+                        encoderDrive(TURN_SPEED, 12, -12, 3);
                         encoderDrive(DRIVE_SPEED, 20, 20, 3);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
-                        encoderDrive(TURN_SPEED, 5, -5, 2);
+                        encoderDrive(TURN_SPEED, 5, -5, 3);
                         encoderDrive(DRIVE_SPEED, 20, 20,5);
-                        encoderDrive(TURN_SPEED, -10, 10, 2);
+                        encoderDrive(TURN_SPEED, -10, 10, 3);
                         encoderDrive(DRIVE_SPEED, 20, 20, 3);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("center")) {
-                        encoderDrive(TURN_SPEED, -2, 2, 2);
-                        encoderDrive(DRIVE_SPEED, 40, 40, 6);
+                        encoderDrive(DRIVE_SPEED, -24, -24, 3);
+                        encoderDrive(TURN_SPEED, -2, 2, 3);
+                        encoderDrive(0.15, 20, 20, 3);
+                        encoderDrive(DRIVE_SPEED, 45, 45, 5);
                         isGoldKnocked = true;
                     }
                 }
