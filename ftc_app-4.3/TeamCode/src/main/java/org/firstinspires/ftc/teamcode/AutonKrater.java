@@ -70,9 +70,9 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonomousBasis", group="Pushbot")
+@Autonomous(name="AutonKrater", group="Pushbot")
 //@Disabled
-public class AutonomousBasis extends LinearOpMode {
+public class AutonKrater extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -103,7 +103,7 @@ public class AutonomousBasis extends LinearOpMode {
 
     static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;    //TODO: change to core hex motor 2240 / (1.4 * 3.1415)
 
-    static final double     DRIVE_SPEED             = 0.6;
+    static final double     DRIVE_SPEED             = 0.4;
     static final double     TURN_SPEED              = 0.4;
 
     @Override
@@ -175,27 +175,23 @@ public class AutonomousBasis extends LinearOpMode {
                                     if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
                                         GoldPos = "notRight";
                                         telemetry.addData("GoldPos: ", "notRight");
-                                        encoderDrive(DRIVE_SPEED, -8, -8, 2);
-                                        encoderDrive(TURN_SPEED, -6, 9, 4);
-                                        encoderDrive(DRIVE_SPEED, 3, 3, 2);
-                                        sleep(500);
+                                        encoderDrive(DRIVE_SPEED, -8, -8, 1);
+                                        encoderDrive(TURN_SPEED, -6, 9, 1);
+                                        encoderDrive(DRIVE_SPEED, 3, 3, 1);
                                     }
                                     else if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                                         GoldPos = "right";
                                         telemetry.addData("GoldPos: ", "right");
-                                        sleep(500);
                                     }
                                 }
                                 else if(GoldPos.equals("notRight")) {
                                     if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                                         GoldPos = "center";
                                         telemetry.addData("GoldPos: ", "center");
-                                        sleep(500);
                                     }
                                     else if(recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
                                         GoldPos = "left";
                                         telemetry.addData("GoldPos: ", "left");
-                                        sleep(500);
                                     }
                                 }
                             }
@@ -206,25 +202,40 @@ public class AutonomousBasis extends LinearOpMode {
                 }
                 if(GoldPos != null) {
                     if(GoldPos.equals("left")) {
-                        encoderDrive(DRIVE_SPEED, -10, -10, 2);
-                        encoderDrive(TURN_SPEED, -2, 5, 3);
-                        encoderDrive(DRIVE_SPEED, 60, 60, 5);
-                        encoderDrive(TURN_SPEED, 12, -12, 3);
-                        encoderDrive(DRIVE_SPEED, 20, 20, 3);
+                        encoderDrive(DRIVE_SPEED, -10, -10, 1);
+                        encoderDrive(TURN_SPEED, -2, 6, 1);
+                        encoderDrive(DRIVE_SPEED, 30, 30, 1);
+                        encoderDrive(TURN_SPEED, -12, -12, 1);
+                        encoderDrive(TURN_SPEED,  -3, 9, 1);
+                       // encoderDrive(DRIVE_SPEED, 15, 15, 1);
+                       // encoderDrive(DRIVE_SPEED, -5, 10, 1);
+                        //encoderDrive(DRIVE_SPEED, 15, 15, 1);
+                       // encoderDrive(DRIVE_SPEED, -2, 6, 1);
+                        encoderDrive(DRIVE_SPEED, 110, 110, 1);
+                                // encoderDrive(DRIVE_SPEED, 20, 20, 3);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
-                        encoderDrive(TURN_SPEED, 5, -5, 3);
-                        encoderDrive(DRIVE_SPEED, 20, 20,5);
-                        encoderDrive(TURN_SPEED, -10, 10, 3);
-                        encoderDrive(DRIVE_SPEED, 20, 20, 3);
+                        encoderDrive(TURN_SPEED, 3, -4, 1);
+                        encoderDrive(DRIVE_SPEED, 20, 20,1);
+                        encoderDrive(TURN_SPEED, -34, -34, 1);
+                        encoderDrive(DRIVE_SPEED, -5, 30, 1);
+                        encoderDrive(DRIVE_SPEED, 30, 30, 1);
+                        encoderDrive(DRIVE_SPEED, -5, 18, 1);
+                        encoderDrive(DRIVE_SPEED, 70, 70, 1);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("center")) {
-                        encoderDrive(DRIVE_SPEED, -24, -24, 3);
-                        encoderDrive(TURN_SPEED, -2, 2, 3);
+                        encoderDrive(DRIVE_SPEED, -4, -4, 1);
+                        encoderDrive(TURN_SPEED, 5, -2, 1);
                        // encoderDrive(0.15, 20, 20, 3);
-                        encoderDrive(DRIVE_SPEED, 50, 50, 5);
+                        encoderDrive(DRIVE_SPEED, 15, 15, 1);
+                        encoderDrive(DRIVE_SPEED, -14, -14, 1);
+                        encoderDrive(DRIVE_SPEED, -5, 25, 1);
+                        encoderDrive(DRIVE_SPEED, 30, 30, 1);
+                        encoderDrive(DRIVE_SPEED, -5, 7, 1);
+                        encoderDrive(DRIVE_SPEED, 90, 90, 1);
+
                         isGoldKnocked = true;
                     }
                 }
@@ -234,6 +245,7 @@ public class AutonomousBasis extends LinearOpMode {
         if(tfod != null) {
             tfod.shutdown();
         }
+        encoderDrive(DRIVE_SPEED, -60, 60, 1);
 
         //sleep(1000);     // pause for servos to move
 
@@ -299,7 +311,7 @@ public class AutonomousBasis extends LinearOpMode {
             LeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             RightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            sleep(250);   // optional pause after each move
+            sleep(100);   // optional pause after each move
         }
     }
     public void EncoderLift(double speed, double cm, double TimeoutS) {
