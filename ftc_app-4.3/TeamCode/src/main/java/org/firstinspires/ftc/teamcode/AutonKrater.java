@@ -157,7 +157,7 @@ public class AutonKrater extends LinearOpMode {
 //        sleep(1000);
         //EncoderLift(0.5, -8, 3);
        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 16, 16, 2);
-       encoderDrive(TURN_SPEED, TURN_SPEED, 2,-5, 2);
+       encoderDrive(TURN_SPEED, TURN_SPEED, 2,-5, 1);
        //encoderDrive(DRIVE_SPEED, 6, 6, 2);
         //EncoderLift(0.5, 16, 3);
         if(opModeIsActive()) {
@@ -207,17 +207,10 @@ public class AutonKrater extends LinearOpMode {
                         encoderDrive(TURN_SPEED, TURN_SPEED,-2, 6, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,30, 30, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -18, -18, 1);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, 28, -28, 2);
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -52, -52, 3);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -20, 0, 2);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -4, 15, 2);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-12, -12, 2);
-//                        encoderDrive(TURN_SPEED,  TURN_SPEED,-3, 9, 2);
-//                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,33, 33, 2);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-8, 8, 2);
-//                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,8, 8, 1);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-8, 8, 1);
-                       // encoderDrive(DRIVE_SPEED, 15, 15, 1);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, 30, -30, 2);
+                        encoderDrive(DRIVE_SPEED, 0.8 * DRIVE_SPEED, -58, -50, 4);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -19, 0, 2);
+                        //encoderDrive(TURN_SPEED, TURN_SPEED, -4, 15, 2);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
@@ -227,12 +220,6 @@ public class AutonKrater extends LinearOpMode {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -80, -80, 4);
                         encoderDrive(TURN_SPEED, TURN_SPEED, -2, 15, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -16, -16, 2);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-7, 38, 3);
-//                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,40, 40, 4);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-36 , 36 , 2);
-//                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,-20, -20, 2);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-18, 7, 2);
-                        //encoderDrive(DRIVE_SPEED, 15, 15  , 2);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("center")) {
@@ -243,11 +230,6 @@ public class AutonKrater extends LinearOpMode {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -59, -59, 3);
                         encoderDrive(TURN_SPEED, TURN_SPEED, -5, 19, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -20, -20, 2);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-5, 24, 2);
-//                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,48, 48, 2);
-//                        encoderDrive(TURN_SPEED, TURN_SPEED,-6, 15, 2);
-//                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,10, 10, 1);
-
                         isGoldKnocked = true;
                     }
                 }

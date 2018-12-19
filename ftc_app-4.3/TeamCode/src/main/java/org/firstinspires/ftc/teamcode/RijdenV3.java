@@ -70,15 +70,16 @@ public class RijdenV3 extends OpMode
     private DcMotor IntakeSpin  = null;
     private Servo ArmL          = null;
     private Servo ArmR          = null;
-    private Servo Box           = null;
+    private Servo BoxL          = null;
+    private Servo BoxR          = null;
 
     // These values control the servo speed
     private final double ArmServoDelta = 0.03;
     private final double ArmServoDelayTime = 0.06;
     private double ArmTgtPos;
 
-    private final double BoxServoDelta = 0.05;
-    private final double BoxServoDelayTime = 0.03;
+    private final double BoxServoDelta = 0.07;
+    private final double BoxServoDelayTime = 0.02;
     private double BoxTgtPos;
     
     /*
@@ -93,7 +94,8 @@ public class RijdenV3 extends OpMode
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
         ArmL       = hardwareMap.get(Servo.class, "ArmL");
         ArmR       = hardwareMap.get(Servo.class, "ArmR");
-        Box        = hardwareMap.get(Servo.class, "Box");
+        BoxL       = hardwareMap.get(Servo.class, "BoxL");
+        BoxR       = hardwareMap.get(Servo.class, "BoxR");
 
         // Give the servo target position a first value
         ArmTgtPos = 1;
@@ -182,12 +184,14 @@ public class RijdenV3 extends OpMode
             else if(gamepad2.dpad_up) {
                 BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 1);
             }
-            Box.setPosition((BoxTgtPos * 0.325) + 0.375);
+            //Box.setPosition((BoxTgtPos * 0.325) + 0.375);
+            BoxL.setPosition((BoxTgtPos * 0.3625) + 0.3625);
+            BoxR.setPosition((BoxTgtPos * -0.45) + 0.45);
             BoxServoTime.reset();
         }
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("ArmTgtPos", ArmTgtPos);
+        telemetry.addData("BoxTgtPos", BoxTgtPos);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Servos", "left (%.2f), right (%.2f)", ArmL.getPosition(), ArmR.getPosition());
     }
