@@ -85,7 +85,7 @@ public class AutonKrater extends LinearOpMode {
     private DcMotor IntakeSpin  = null;
     private Servo ArmL          = null;
     private Servo ArmR          = null;
-    private Servo Box           = null;
+   // private Servo Box           = null;
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -116,7 +116,7 @@ public class AutonKrater extends LinearOpMode {
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
         ArmL       = hardwareMap.get(Servo.class, "ArmL");
         ArmR       = hardwareMap.get(Servo.class, "ArmR");
-        Box        = hardwareMap.get(Servo.class, "Box");
+        //Box        = hardwareMap.get(Servo.class, "Box");
 
         initVuforia();
 
@@ -208,9 +208,9 @@ public class AutonKrater extends LinearOpMode {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,30, 30, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -18, -18, 1);
                         encoderDrive(TURN_SPEED, TURN_SPEED, 30, -30, 2);
-                        encoderDrive(DRIVE_SPEED, 0.8 * DRIVE_SPEED, -58, -50, 4);
+                        encoderDrive(DRIVE_SPEED, 0.8 * DRIVE_SPEED, -60, -52, 4);
                         encoderDrive(TURN_SPEED, TURN_SPEED, -19, 0, 2);
-                        //encoderDrive(TURN_SPEED, TURN_SPEED, -4, 15, 2);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -30, -30, 2);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
