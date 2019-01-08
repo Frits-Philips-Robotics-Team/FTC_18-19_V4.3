@@ -99,7 +99,7 @@ public class RijdenV3 extends OpMode
 
         // Give the servo target position a first value
         ArmTgtPos = 1;
-        BoxTgtPos = -0.7;
+        BoxTgtPos = 0;
 
         // Reverse the motor that runs backwards
         LeftDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -186,7 +186,7 @@ public class RijdenV3 extends OpMode
             }
             //Box.setPosition((BoxTgtPos * 0.325) + 0.375);
             BoxL.setPosition((BoxTgtPos * 0.3625) + 0.3625);
-            BoxR.setPosition((BoxTgtPos * -0.45) + 0.45);
+            BoxR.setPosition((BoxTgtPos * -0.3625) + 0.47);
             BoxServoTime.reset();
         }
 
