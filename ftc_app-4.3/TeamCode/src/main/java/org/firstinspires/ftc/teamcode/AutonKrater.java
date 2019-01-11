@@ -85,6 +85,7 @@ public class AutonKrater extends LinearOpMode {
     private DcMotor IntakeSpin  = null;
     private Servo ArmL          = null;
     private Servo ArmR          = null;
+    private Servo Hook          = null;
    // private Servo Box           = null;
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
@@ -102,7 +103,7 @@ public class AutonKrater extends LinearOpMode {
     static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
 
-    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;    //TODO: change to core hex motor 2240 / (1.4 * 3.1415)
+    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;
 
     static final double     DRIVE_SPEED             = 0.4;
     static final double     TURN_SPEED              = 0.4;
@@ -116,6 +117,7 @@ public class AutonKrater extends LinearOpMode {
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
         ArmL       = hardwareMap.get(Servo.class, "ArmL");
         ArmR       = hardwareMap.get(Servo.class, "ArmR");
+        Hook       = hardwareMap.get(Servo.class, "Hook");
         //Box        = hardwareMap.get(Servo.class, "Box");
 
         initVuforia();
@@ -147,17 +149,25 @@ public class AutonKrater extends LinearOpMode {
                           RightDrive.getCurrentPosition());
         telemetry.update();
 
+        Hook.setPosition(0.57);
+        //Lift.setPower(0.1); // Keeps the robot hanging
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-//        ArmL.setPosition(0.6);
-//        ArmR.setPosition(0.4);
-//        sleep(500);
+        ArmL.setPosition(0.4);
+        ArmR.setPosition(0.6);
+        sleep(500);
 //        Box.setPosition(0.4);
 //        sleep(1000);
-        //EncoderLift(0.5, -8, 3);
-       encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 16, 16, 2);
-       encoderDrive(TURN_SPEED, TURN_SPEED, 2,-5, 1);
+        Lift.setPower(0.5);
+        sleep(500);
+        Hook.setPosition(0.15);
+        sleep(2000);
+        EncoderLift(-1, -33, 5);
+        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 5, 5, 1);
+        EncoderLift(0.7, 30, 5);
+        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 11, 11, 2);
+        encoderDrive(TURN_SPEED, TURN_SPEED, 2,-5, 1);
        //encoderDrive(DRIVE_SPEED, 6, 6, 2);
         //EncoderLift(0.5, 16, 3);
         if(opModeIsActive()) {
@@ -204,13 +214,13 @@ public class AutonKrater extends LinearOpMode {
                 if(GoldPos != null) {
                     if(GoldPos.equals("left")) {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,-10, -10, 2);
-                        encoderDrive(TURN_SPEED, TURN_SPEED,-2, 6, 2);
+                        encoderDrive(TURN_SPEED, TURN_SPEED,-3, 6, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,30, 30, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -18, -18, 1);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, 30, -30, 2);
-                        encoderDrive(DRIVE_SPEED, 0.8 * DRIVE_SPEED, -60, -52, 4);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -19, 0, 2);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -30, -30, 2);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, 30, -30, 3);
+                        encoderDrive(DRIVE_SPEED, 0.7 * DRIVE_SPEED, -64, -45, 4);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -15, 0, 2);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -20, -20, 2);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
@@ -227,9 +237,9 @@ public class AutonKrater extends LinearOpMode {
                         encoderDrive(TURN_SPEED, TURN_SPEED,5, -3, 1);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,15, 15, 2);
                         encoderDrive(TURN_SPEED, TURN_SPEED,0, -41, 2);
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -59, -59, 3);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -5, 19, 2);
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -20, -20, 2);
+                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -54, -54, 3);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -6, 19, 2);
+                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -24, -24, 2);
                         isGoldKnocked = true;
                     }
                 }
@@ -239,9 +249,7 @@ public class AutonKrater extends LinearOpMode {
         if(tfod != null) {
             tfod.shutdown();
         }
-       // encoderDrive(DRIVE_SPEED, -60, 60, 1);
-       // encoderDrive(DRIVE_SPEED)
-
+        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 18,+ 18, 1);
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }

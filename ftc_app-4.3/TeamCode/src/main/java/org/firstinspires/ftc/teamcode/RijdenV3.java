@@ -72,6 +72,7 @@ public class RijdenV3 extends OpMode
     private Servo ArmR          = null;
     private Servo BoxL          = null;
     private Servo BoxR          = null;
+    private Servo Hook          = null;
 
     // These values control the servo speed
     private final double ArmServoDelta = 0.03;
@@ -96,6 +97,7 @@ public class RijdenV3 extends OpMode
         ArmR       = hardwareMap.get(Servo.class, "ArmR");
         BoxL       = hardwareMap.get(Servo.class, "BoxL");
         BoxR       = hardwareMap.get(Servo.class, "BoxR");
+        Hook       = hardwareMap.get(Servo.class, "Hook");
 
         // Give the servo target position a first value
         ArmTgtPos = 1;
@@ -190,9 +192,16 @@ public class RijdenV3 extends OpMode
             BoxServoTime.reset();
         }
 
+        if(gamepad2.dpad_left) {
+            Hook.setPosition(0.2);
+        }
+        else if(gamepad2.dpad_right) {
+            Hook.setPosition(0.57);
+        }
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("BoxTgtPos", BoxTgtPos);
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("LiftPower", Lift.getPower());
         telemetry.addData("Servos", "left (%.2f), right (%.2f)", ArmL.getPosition(), ArmR.getPosition());
     }
 
