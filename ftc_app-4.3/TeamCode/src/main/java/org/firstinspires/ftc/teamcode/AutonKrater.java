@@ -339,6 +339,10 @@ public class AutonKrater extends LinearOpMode {
         }
     }
 
+    public void GyroTurn(double leftSpeed, double rightSpeed, double TgtRotation, double TimeoutS) {
+
+    }
+
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
