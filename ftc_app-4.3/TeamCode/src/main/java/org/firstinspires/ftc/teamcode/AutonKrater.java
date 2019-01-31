@@ -103,7 +103,7 @@ public class AutonKrater extends LinearOpMode {
     static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
 
-    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;
+    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ; //288
 
     static final double     DRIVE_SPEED             = 0.4;
     static final double     TURN_SPEED              = 0.4;

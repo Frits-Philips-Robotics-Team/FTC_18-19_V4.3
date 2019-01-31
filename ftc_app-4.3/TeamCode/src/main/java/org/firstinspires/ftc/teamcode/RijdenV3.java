@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -66,10 +66,10 @@ public class RijdenV3 extends OpMode
     private ElapsedTime BoxServoTime = new ElapsedTime();
     private DcMotor LeftDrive   = null;
     private DcMotor RightDrive  = null;
-    private DcMotor Lift        = null;
+    private DcMotorSimple Lift  = null;
     private DcMotor IntakeSpin  = null;
-    private Servo ArmL          = null;
-    private Servo ArmR          = null;
+//    private Servo ArmL          = null;
+//    private Servo ArmR          = null;
     private Servo BoxL          = null;
     private Servo BoxR          = null;
     private Servo Hook          = null;
@@ -91,10 +91,10 @@ public class RijdenV3 extends OpMode
         // Initialize the hardware variables
         LeftDrive  = hardwareMap.get(DcMotor.class, "MotorL");
         RightDrive = hardwareMap.get(DcMotor.class, "MotorR");
-        Lift       = hardwareMap.get(DcMotor.class, "Lift");
+        Lift       = hardwareMap.get(DcMotorSimple.class, "Lift");
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
-        ArmL       = hardwareMap.get(Servo.class, "ArmL");
-        ArmR       = hardwareMap.get(Servo.class, "ArmR");
+//        ArmL       = hardwareMap.get(Servo.class, "ArmL");
+//        ArmR       = hardwareMap.get(Servo.class, "ArmR");
         BoxL       = hardwareMap.get(Servo.class, "BoxL");
         BoxR       = hardwareMap.get(Servo.class, "BoxR");
         Hook       = hardwareMap.get(Servo.class, "Hook");
@@ -159,32 +159,32 @@ public class RijdenV3 extends OpMode
 
         // Control lift
         double LiftControl = gamepad2.left_stick_y;
-        Lift.setPower(0.75 * LiftControl);
+        Lift.setPower(-1 * LiftControl);
 
-        // Control intake arm servo's slowly. First use range from -1 to 1 for easy math, then scale
-        // to proper servo position
-        if(ArmServoTime.time() > ArmServoDelayTime) {
-            if(gamepad2.a) {
-                ArmTgtPos = Range.clip(ArmTgtPos + ArmServoDelta, -1, 1);
-            }
-            else if(gamepad2.y) {
-                ArmTgtPos = Range.clip(ArmTgtPos - ArmServoDelta, -1, 1);
-            }
-            ArmLPos = ((ArmTgtPos * 0.3) + 0.6);
-            ArmRPos = ((-ArmTgtPos * 0.3)  + 0.4);
-            ArmL.setPosition(ArmLPos);
-            ArmR.setPosition(ArmRPos);
-            ArmServoTime.reset();
-        }
+//        // Control intake arm servo's slowly. First use range from -1 to 1 for easy math, then scale
+//        // to proper servo position
+//        if(ArmServoTime.time() > ArmServoDelayTime) {
+//            if(gamepad2.a) {
+//                ArmTgtPos = Range.clip(ArmTgtPos + ArmServoDelta, -1, 1);
+//            }
+//            else if(gamepad2.y) {
+//                ArmTgtPos = Range.clip(ArmTgtPos - ArmServoDelta, -1, 1);
+//            }
+//            ArmLPos = ((ArmTgtPos * 0.3) + 0.6);
+//            ArmRPos = ((-ArmTgtPos * 0.3)  + 0.4);
+//            ArmL.setPosition(ArmLPos);
+//            ArmR.setPosition(ArmRPos);
+//            ArmServoTime.reset();
+//        }
         
         IntakeSpin.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
 
         if(BoxServoTime.time() > BoxServoDelayTime) {
             if(gamepad2.dpad_down) {
-                BoxTgtPos = Range.clip(BoxTgtPos - BoxServoDelta, -1, 1);
+                BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 1);
             }
             else if(gamepad2.dpad_up) {
-                BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 1);
+                BoxTgtPos = Range.clip(BoxTgtPos - BoxServoDelta, -1, 1);
             }
             //Box.setPosition((BoxTgtPos * 0.325) + 0.375);
             BoxL.setPosition((BoxTgtPos * 0.3625) + 0.3625);
@@ -193,7 +193,7 @@ public class RijdenV3 extends OpMode
         }
 
         if(gamepad2.dpad_left) {
-            Hook.setPosition(0.2);
+            Hook.setPosition(0.9);
         }
         else if(gamepad2.dpad_right) {
             Hook.setPosition(0.57);
@@ -202,7 +202,7 @@ public class RijdenV3 extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("BoxTgtPos", BoxTgtPos);
         telemetry.addData("LiftPower", Lift.getPower());
-        telemetry.addData("Servos", "left (%.2f), right (%.2f)", ArmL.getPosition(), ArmR.getPosition());
+        //telemetry.addData("Servos", "left (%.2f), right (%.2f)", ArmL.getPosition(), ArmR.getPosition());
     }
 
     /*

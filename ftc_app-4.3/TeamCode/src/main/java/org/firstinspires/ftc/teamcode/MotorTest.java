@@ -29,12 +29,10 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -56,8 +54,8 @@ public class MotorTest extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor Arm = null;
-    int ArmPos = 0;
+    private DcMotorSimple ArmL = null;
+    private DcMotorSimple ArmR = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -69,9 +67,8 @@ public class MotorTest extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        Arm  = hardwareMap.get(DcMotor.class, "Arm");
-
-        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmL = hardwareMap.get(DcMotorSimple.class, "ArmL");
+        ArmR = hardwareMap.get(DcMotorSimple.class, "ArmR");
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -98,29 +95,12 @@ public class MotorTest extends OpMode
     @Override
     public void loop() {
 
-        if (runtime.time() > 100) {
-            runtime.reset();
-            if (gamepad1.a) {
-                ArmPos += 10;
-            }
-            else if (gamepad1.b) {
-                ArmPos -= 10;
-            }
-        }
-
-
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
-        // Send calculated power to wheels
-        Arm.setTargetPosition(ArmPos);
+        ArmL.setPower(0.8 * gamepad1.left_stick_y);
+        ArmR.setPower(-0.8 * gamepad1.left_stick_y);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "Arm (%.2f))", ArmPos);
+        telemetry.addData("MotorPower", ArmL.getPower());
     }
 
     /*
