@@ -62,23 +62,18 @@ public class RijdenV3 extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private ElapsedTime ArmServoTime = new ElapsedTime();
     private ElapsedTime BoxServoTime = new ElapsedTime();
     private DcMotor LeftDrive   = null;
     private DcMotor RightDrive  = null;
-    private DcMotorSimple Lift  = null;
     private DcMotor IntakeSpin  = null;
-//    private Servo ArmL          = null;
-//    private Servo ArmR          = null;
+    private DcMotorSimple Lift  = null;
+    private DcMotorSimple ArmL  = null;
+    private DcMotorSimple ArmR  = null;
     private Servo BoxL          = null;
     private Servo BoxR          = null;
     private Servo Hook          = null;
 
     // These values control the servo speed
-    private final double ArmServoDelta = 0.03;
-    private final double ArmServoDelayTime = 0.06;
-    private double ArmTgtPos;
-
     private final double BoxServoDelta = 0.07;
     private final double BoxServoDelayTime = 0.02;
     private double BoxTgtPos;
@@ -93,14 +88,13 @@ public class RijdenV3 extends OpMode
         RightDrive = hardwareMap.get(DcMotor.class, "MotorR");
         Lift       = hardwareMap.get(DcMotorSimple.class, "Lift");
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
-//        ArmL       = hardwareMap.get(Servo.class, "ArmL");
-//        ArmR       = hardwareMap.get(Servo.class, "ArmR");
+        ArmL       = hardwareMap.get(DcMotorSimple.class, "ArmL");
+        ArmR       = hardwareMap.get(DcMotorSimple.class, "ArmR");
         BoxL       = hardwareMap.get(Servo.class, "BoxL");
         BoxR       = hardwareMap.get(Servo.class, "BoxR");
         Hook       = hardwareMap.get(Servo.class, "Hook");
 
         // Give the servo target position a first value
-        ArmTgtPos = 1;
         BoxTgtPos = 0;
 
         // Reverse the motor that runs backwards
@@ -134,8 +128,6 @@ public class RijdenV3 extends OpMode
         // Setup a variable for each drive wheel to save power level for telemetry
         double LeftPower;
         double RightPower;
-        double ArmLPos;
-        double ArmRPos;
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         double Drive = -gamepad1.left_stick_y;
@@ -161,21 +153,8 @@ public class RijdenV3 extends OpMode
         double LiftControl = gamepad2.left_stick_y;
         Lift.setPower(-1 * LiftControl);
 
-//        // Control intake arm servo's slowly. First use range from -1 to 1 for easy math, then scale
-//        // to proper servo position
-//        if(ArmServoTime.time() > ArmServoDelayTime) {
-//            if(gamepad2.a) {
-//                ArmTgtPos = Range.clip(ArmTgtPos + ArmServoDelta, -1, 1);
-//            }
-//            else if(gamepad2.y) {
-//                ArmTgtPos = Range.clip(ArmTgtPos - ArmServoDelta, -1, 1);
-//            }
-//            ArmLPos = ((ArmTgtPos * 0.3) + 0.6);
-//            ArmRPos = ((-ArmTgtPos * 0.3)  + 0.4);
-//            ArmL.setPosition(ArmLPos);
-//            ArmR.setPosition(ArmRPos);
-//            ArmServoTime.reset();
-//        }
+        ArmL.setPower(0.8 * gamepad2.right_stick_y);
+        ArmR.setPower(-0.8 * gamepad2.right_stick_y);
         
         IntakeSpin.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
 
@@ -202,7 +181,7 @@ public class RijdenV3 extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("BoxTgtPos", BoxTgtPos);
         telemetry.addData("LiftPower", Lift.getPower());
-        //telemetry.addData("Servos", "left (%.2f), right (%.2f)", ArmL.getPosition(), ArmR.getPosition());
+        telemetry.addData("ArmPower", ArmL.getPower());
     }
 
     /*

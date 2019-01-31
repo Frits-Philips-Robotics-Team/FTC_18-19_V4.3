@@ -29,17 +29,24 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.sql.Driver;
 import java.util.List;
@@ -86,6 +93,9 @@ public class AutonKrater extends LinearOpMode {
     private Servo ArmL          = null;
     private Servo ArmR          = null;
     private Servo Hook          = null;
+
+    BNO055IMU imu;
+    Orientation angles;
    // private Servo Box           = null;
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
@@ -103,22 +113,35 @@ public class AutonKrater extends LinearOpMode {
     static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
 
-    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ; //288
+    static final double     LIFT_COUNTS_PER_CM      = 509.31083877 ;
 
     static final double     DRIVE_SPEED             = 0.4;
     static final double     TURN_SPEED              = 0.4;
 
+    static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
+    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
+
+
     @Override
     public void runOpMode() {
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+
           //Initialize the drive system variables.
         LeftDrive  = hardwareMap.get(DcMotor.class, "MotorL");
         RightDrive = hardwareMap.get(DcMotor.class, "MotorR");
         Lift       = hardwareMap.get(DcMotor.class, "Lift");
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
-        ArmL       = hardwareMap.get(Servo.class, "ArmL");
-        ArmR       = hardwareMap.get(Servo.class, "ArmR");
+//        ArmL       = hardwareMap.get(Servo.class, "ArmL");
+//        ArmR       = hardwareMap.get(Servo.class, "ArmR");
         Hook       = hardwareMap.get(Servo.class, "Hook");
         //Box        = hardwareMap.get(Servo.class, "Box");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
 
         initVuforia();
 
@@ -339,8 +362,63 @@ public class AutonKrater extends LinearOpMode {
         }
     }
 
-    public void GyroTurn(double leftSpeed, double rightSpeed, double TgtRotation, double TimeoutS) {
+    public void gyroTurn (  double speed, double angle) {
 
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
+    }
+
+    boolean onHeading(double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        LeftDrive.setPower(leftSpeed);
+        RightDrive.setPower(rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    public double getError(double targetAngle) {
+
+        double robotError;
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - angles.firstAngle;
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
     }
 
     private void initVuforia() {
