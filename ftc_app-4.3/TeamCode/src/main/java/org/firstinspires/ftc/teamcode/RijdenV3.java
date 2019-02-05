@@ -66,7 +66,7 @@ public class RijdenV3 extends OpMode
     private DcMotor LeftDrive   = null;
     private DcMotor RightDrive  = null;
     private DcMotor IntakeSpin  = null;
-    private DcMotorSimple Lift  = null;
+    private DcMotor Lift  = null;
     private DcMotorSimple ArmL  = null;
     private DcMotorSimple ArmR  = null;
     private Servo BoxL          = null;
@@ -77,7 +77,7 @@ public class RijdenV3 extends OpMode
     private final double BoxServoDelta = 0.07;
     private final double BoxServoDelayTime = 0.02;
     private double BoxTgtPos;
-    
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -86,7 +86,7 @@ public class RijdenV3 extends OpMode
         // Initialize the hardware variables
         LeftDrive  = hardwareMap.get(DcMotor.class, "MotorL");
         RightDrive = hardwareMap.get(DcMotor.class, "MotorR");
-        Lift       = hardwareMap.get(DcMotorSimple.class, "Lift");
+        Lift       = hardwareMap.get(DcMotor.class, "Lift");
         IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
         ArmL       = hardwareMap.get(DcMotorSimple.class, "ArmL");
         ArmR       = hardwareMap.get(DcMotorSimple.class, "ArmR");
@@ -100,6 +100,8 @@ public class RijdenV3 extends OpMode
         // Reverse the motor that runs backwards
         LeftDrive.setDirection(DcMotor.Direction.FORWARD);
         RightDrive.setDirection(DcMotor.Direction.REVERSE);
+        Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -130,8 +132,8 @@ public class RijdenV3 extends OpMode
         double RightPower;
 
         // POV Mode uses left stick to go forward, and right stick to turn.
-        double Drive = -gamepad1.left_stick_y;
-        double Turn  =  gamepad1.right_stick_x;
+        double Drive = -0.9 * gamepad1.left_stick_y;
+        double Turn  =  0.9 * gamepad1.right_stick_x;
         LeftPower    = Range.clip(Drive + Turn, -1.0, 1.0) ;
         RightPower   = Range.clip(Drive - Turn, -1.0, 1.0) ;
 
@@ -151,19 +153,19 @@ public class RijdenV3 extends OpMode
 
         // Control lift
         double LiftControl = gamepad2.left_stick_y;
-        Lift.setPower(-1 * LiftControl);
+        Lift.setPower(LiftControl);
 
         ArmL.setPower(0.8 * gamepad2.right_stick_y);
         ArmR.setPower(-0.8 * gamepad2.right_stick_y);
-        
-        IntakeSpin.setPower(gamepad2.left_trigger - gamepad2.right_trigger);
+
+        IntakeSpin.setPower(0.7 * (gamepad2.left_trigger - gamepad2.right_trigger));
 
         if(BoxServoTime.time() > BoxServoDelayTime) {
             if(gamepad2.dpad_down) {
-                BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 1);
+                BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 0.8);
             }
             else if(gamepad2.dpad_up) {
-                BoxTgtPos = Range.clip(BoxTgtPos - BoxServoDelta, -1, 1);
+                BoxTgtPos = Range.clip(BoxTgtPos - BoxServoDelta, -1, 0.8);
             }
             //Box.setPosition((BoxTgtPos * 0.325) + 0.375);
             BoxL.setPosition((BoxTgtPos * 0.3625) + 0.3625);
@@ -175,7 +177,7 @@ public class RijdenV3 extends OpMode
             Hook.setPosition(0.9);
         }
         else if(gamepad2.dpad_right) {
-            Hook.setPosition(0.57);
+            Hook.setPosition(0.4);
         }
 
         // Show the elapsed game time and wheel power.

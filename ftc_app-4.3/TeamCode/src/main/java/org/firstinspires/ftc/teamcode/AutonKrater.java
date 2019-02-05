@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -78,7 +79,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonKrater", group="Pushbot")
+@Autonomous(name="AutonKrater", group="Linear Opmode")
 //@Disabled
 public class AutonKrater extends LinearOpMode {
 
@@ -89,14 +90,15 @@ public class AutonKrater extends LinearOpMode {
     private DcMotor LeftDrive   = null;
     private DcMotor RightDrive  = null;
     private DcMotor Lift        = null;
-    private DcMotor IntakeSpin  = null;
-    private Servo ArmL          = null;
-    private Servo ArmR          = null;
+    private DcMotorSimple IntakeSpin = null;
+    private DcMotorSimple ArmL  = null;
+    private DcMotor ArmR        = null;
     private Servo Hook          = null;
+    private Servo BoxL          = null;
+    private Servo BoxR          = null;
 
     BNO055IMU imu;
     Orientation angles;
-   // private Servo Box           = null;
 
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -108,12 +110,12 @@ public class AutonKrater extends LinearOpMode {
     private boolean isGoldKnocked = false;
 
     static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // REV HD hex motor
-    static final double     DRIVE_GEAR_REDUCTION    = 0.66666667 ;
+    static final double     DRIVE_GEAR_REDUCTION    = 1 ;
     static final double     WHEEL_DIAMETER_CM       = 10.16 ;     // For figuring circumference
     static final double     COUNTS_PER_CM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_CM * 3.1415);
 
-    static final double     LIFT_COUNTS_PER_CM      = 30.3157895 ; //288 / 9.5 cm
+    static final double     LIFT_COUNTS_PER_CM      = 28.8 ; //288 / 10 cm
 
     static final double     DRIVE_SPEED             = 0.4;
     static final double     TURN_SPEED              = 0.4;
@@ -130,15 +132,16 @@ public class AutonKrater extends LinearOpMode {
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
 
-          //Initialize the drive system variables.
+          //Initialize the system variables.
         LeftDrive  = hardwareMap.get(DcMotor.class, "MotorL");
         RightDrive = hardwareMap.get(DcMotor.class, "MotorR");
         Lift       = hardwareMap.get(DcMotor.class, "Lift");
-        IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
-//        ArmL       = hardwareMap.get(Servo.class, "ArmL");
-//        ArmR       = hardwareMap.get(Servo.class, "ArmR");
+        IntakeSpin = hardwareMap.get(DcMotorSimple.class, "IntakeSpin");
+        ArmL       = hardwareMap.get(DcMotorSimple.class, "ArmL");
+        ArmR       = hardwareMap.get(DcMotor.class, "ArmR");
         Hook       = hardwareMap.get(Servo.class, "Hook");
-        //Box        = hardwareMap.get(Servo.class, "Box");
+        BoxL       = hardwareMap.get(Servo.class, "BoxL");
+        BoxR       = hardwareMap.get(Servo.class, "BoxR");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
@@ -161,10 +164,17 @@ public class AutonKrater extends LinearOpMode {
         LeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ArmR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ArmR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ArmL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d",
@@ -172,23 +182,29 @@ public class AutonKrater extends LinearOpMode {
                           RightDrive.getCurrentPosition());
         telemetry.update();
 
-        Hook.setPosition(0.57);
+        Hook.setPosition(0.4);
         //Lift.setPower(0.1); // Keeps the robot hanging
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-        ArmL.setPosition(0.4);
-        ArmR.setPosition(0.6);
-        sleep(500);
-//        Box.setPosition(0.4);
-//        sleep(1000);
-        Lift.setPower(0.5);
-        sleep(500);
-        Hook.setPosition(0.15);
-        sleep(2000);
-        EncoderLift(-1, -33, 5);
+        ArmR.setPower(0.4);
+        ArmR.setTargetPosition(70);
+        while(ArmR.isBusy() && opModeIsActive());
+        ArmR.setPower(0);
+        ArmL.setPower(0);
+        BoxL.setPosition(0.5);
+        BoxR.setPosition(0.28);
+        sleep(400);
+        Hook.setPosition(0.9);
+        sleep(1000);
+        EncoderLift(-1, -25, 5);
         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 5, 5, 1);
-        EncoderLift(0.7, 30, 5);
+        EncoderLift(0.7, 22, 5);
+        ArmR.setPower(-1);
+        ArmL.setPower(-0.6);
+        ArmR.setTargetPosition(10);
+        while(ArmR.isBusy() && opModeIsActive());
+        ArmR.setPower(0);
+        ArmL.setPower(0);
         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 11, 11, 2);
         encoderDrive(TURN_SPEED, TURN_SPEED, 2,-5, 1);
        //encoderDrive(DRIVE_SPEED, 6, 6, 2);
