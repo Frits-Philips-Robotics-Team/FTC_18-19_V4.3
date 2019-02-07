@@ -65,10 +65,10 @@ public class RijdenV3 extends OpMode
     private ElapsedTime BoxServoTime = new ElapsedTime();
     private DcMotor LeftDrive   = null;
     private DcMotor RightDrive  = null;
-    private DcMotor IntakeSpin  = null;
-    private DcMotor Lift  = null;
+    private DcMotorSimple IntakeSpin  = null;
+    private DcMotor Lift        = null;
     private DcMotorSimple ArmL  = null;
-    private DcMotorSimple ArmR  = null;
+    private DcMotor ArmR        = null;
     private Servo BoxL          = null;
     private Servo BoxR          = null;
     private Servo Hook          = null;
@@ -87,20 +87,21 @@ public class RijdenV3 extends OpMode
         LeftDrive  = hardwareMap.get(DcMotor.class, "MotorL");
         RightDrive = hardwareMap.get(DcMotor.class, "MotorR");
         Lift       = hardwareMap.get(DcMotor.class, "Lift");
-        IntakeSpin = hardwareMap.get(DcMotor.class, "IntakeSpin");
+        IntakeSpin = hardwareMap.get(DcMotorSimple.class, "IntakeSpin");
         ArmL       = hardwareMap.get(DcMotorSimple.class, "ArmL");
-        ArmR       = hardwareMap.get(DcMotorSimple.class, "ArmR");
+        ArmR       = hardwareMap.get(DcMotor.class, "ArmR");
         BoxL       = hardwareMap.get(Servo.class, "BoxL");
         BoxR       = hardwareMap.get(Servo.class, "BoxR");
         Hook       = hardwareMap.get(Servo.class, "Hook");
 
         // Give the servo target position a first value
-        BoxTgtPos = 0;
+        BoxTgtPos = 0.6;
 
         // Reverse the motor that runs backwards
         LeftDrive.setDirection(DcMotor.Direction.FORWARD);
         RightDrive.setDirection(DcMotor.Direction.REVERSE);
         Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ArmR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Tell the driver that initialization is complete.
@@ -156,16 +157,16 @@ public class RijdenV3 extends OpMode
         Lift.setPower(LiftControl);
 
         ArmL.setPower(0.8 * gamepad2.right_stick_y);
-        ArmR.setPower(-0.8 * gamepad2.right_stick_y);
+        ArmR.setPower(0.8 * gamepad2.right_stick_y);
 
         IntakeSpin.setPower(0.7 * (gamepad2.left_trigger - gamepad2.right_trigger));
 
         if(BoxServoTime.time() > BoxServoDelayTime) {
             if(gamepad2.dpad_down) {
-                BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 0.8);
+                BoxTgtPos = Range.clip(BoxTgtPos + BoxServoDelta, -1, 0.6);
             }
             else if(gamepad2.dpad_up) {
-                BoxTgtPos = Range.clip(BoxTgtPos - BoxServoDelta, -1, 0.8);
+                BoxTgtPos = Range.clip(BoxTgtPos - BoxServoDelta, -1, 0.6);
             }
             //Box.setPosition((BoxTgtPos * 0.325) + 0.375);
             BoxL.setPosition((BoxTgtPos * 0.3625) + 0.3625);
@@ -174,10 +175,10 @@ public class RijdenV3 extends OpMode
         }
 
         if(gamepad2.dpad_left) {
-            Hook.setPosition(0.9);
+            Hook.setPosition(0.4);
         }
         else if(gamepad2.dpad_right) {
-            Hook.setPosition(0.4);
+            Hook.setPosition(0.8);
         }
 
         // Show the elapsed game time and wheel power.
