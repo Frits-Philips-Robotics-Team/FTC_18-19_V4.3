@@ -254,8 +254,8 @@ public class AutonDepot extends LinearOpMode {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,30, 30, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -18, -18, 1);
                         encoderDrive(TURN_SPEED, TURN_SPEED, 30, -30, 2);
-                        encoderDrive(DRIVE_SPEED, 0.7 * DRIVE_SPEED, -75, -50, 4);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -16, 0, 2);
+                        encoderDrive(DRIVE_SPEED, 0.8 * DRIVE_SPEED, -65, -50, 4);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -12, 0, 2);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("right")) {
@@ -263,7 +263,7 @@ public class AutonDepot extends LinearOpMode {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,24, 24,2);
                         encoderDrive(TURN_SPEED, TURN_SPEED,0, -27, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -72, -72, 4);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -8, 15, 2);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -8, 13, 2);
                         isGoldKnocked = true;
                     }
                     else if(GoldPos.equals("center")) {
@@ -272,7 +272,7 @@ public class AutonDepot extends LinearOpMode {
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED,18, 18, 2);
                         encoderDrive(TURN_SPEED, TURN_SPEED,0, -41, 2);
                         encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -54, -54, 3);
-                        encoderDrive(TURN_SPEED, TURN_SPEED, -8, 16, 2);
+                        encoderDrive(TURN_SPEED, TURN_SPEED, -8, 10, 2);
                         isGoldKnocked = true;
                     }
                 }
@@ -282,7 +282,7 @@ public class AutonDepot extends LinearOpMode {
         if(tfod != null) {
             tfod.shutdown();
         }
-        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -35,-35, 1);
+        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, -30,-30, 1);
 //        ArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        ArmR.setPower(0.7);
 //        ArmL.setPower(0.7);

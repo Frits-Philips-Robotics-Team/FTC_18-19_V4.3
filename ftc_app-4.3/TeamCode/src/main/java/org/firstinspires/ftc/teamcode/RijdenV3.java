@@ -156,10 +156,9 @@ public class RijdenV3 extends OpMode
         double LiftControl = gamepad2.left_stick_y;
         Lift.setPower(LiftControl);
 
-        ArmL.setPower(0.8 * gamepad2.right_stick_y);
-        ArmR.setPower(0.8 * gamepad2.right_stick_y);
-
-        IntakeSpin.setPower(0.7 * (gamepad2.left_trigger - gamepad2.right_trigger));
+        ArmL.setPower(0.8 * (gamepad1.left_trigger - gamepad1.right_trigger));
+        ArmR.setPower(0.8 * (gamepad1.left_trigger - gamepad1.right_trigger));
+        IntakeSpin.setPower(0.85 * (gamepad2.left_trigger - gamepad2.right_trigger));
 
         if(BoxServoTime.time() > BoxServoDelayTime) {
             if(gamepad2.dpad_down) {
