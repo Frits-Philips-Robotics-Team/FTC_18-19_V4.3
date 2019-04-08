@@ -133,8 +133,8 @@ public class RijdenV3 extends OpMode
         double RightPower;
 
         // POV Mode uses left stick to go forward, and right stick to turn.
-        double Drive = -0.9 * gamepad1.left_stick_y;
-        double Turn  =  0.9 * gamepad1.right_stick_x;
+        double Drive = -1 * gamepad1.left_stick_y;
+        double Turn  =  1 * gamepad1.right_stick_x;
         LeftPower    = Range.clip(Drive + Turn, -1.0, 1.0) ;
         RightPower   = Range.clip(Drive - Turn, -1.0, 1.0) ;
 
