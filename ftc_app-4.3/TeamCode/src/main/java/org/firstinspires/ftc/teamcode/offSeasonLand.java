@@ -76,9 +76,9 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="offSeasonKrater", group="Linear Opmode")
+@Autonomous(name="offSeasonLand", group="Linear Opmode")
 //@Disabled
-public class offSeasonKrater extends LinearOpMode {
+public class offSeasonLand extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime     runtime = new ElapsedTime();
@@ -194,88 +194,12 @@ public class offSeasonKrater extends LinearOpMode {
         Hook.setPosition(0.4);
         sleep(400);
         EncoderLift(-1, -27, 5);
-        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 4, 4, 3);
+        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 4, 4, 0.5);
         EncoderLift(1, 10, 2);
         ArmR.setPower(-0.8);
         ArmL.setPower(-0.7);
         ArmR.setTargetPosition(40);
         while(ArmR.isBusy() && opModeIsActive());
-        ArmR.setPower(0);
-        ArmL.setPower(0);
-        encoderDrive(DRIVE_SPEED, DRIVE_SPEED, 10, 10, 5);
-        encoderDrive(TURN_SPEED, TURN_SPEED, 3,-5, 3);
-       //encoderDrive(DRIVE_SPEED, 6, 6, 2);
-        //EncoderLift(0.5, 16, 3);
-        if(opModeIsActive()) {
-            if(tfod != null) {
-                tfod.activate();
-            }
-            while(!isGoldKnocked && opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if(updatedRecognitions != null) {
-                        if (updatedRecognitions.size() == 1) {
-                            for (Recognition recognition : updatedRecognitions) {
-                                if(GoldPos == null) {
-                                    if (recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
-                                        GoldPos = "notRight";
-                                        telemetry.addData("GoldPos: ", "notRight");
-                                        //encoderDrive(DRIVE_SPEED, -8, -8, 1);
-                                        encoderDrive(TURN_SPEED, TURN_SPEED,-6, 9, 1);
-                                        //encoderDrive(DRIVE_SPEED, 3, 3, 1);
-                                    }
-                                    else if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                        GoldPos = "right";
-                                        telemetry.addData("GoldPos: ", "right");
-                                    }
-                                }
-                                else if(GoldPos.equals("notRight")) {
-                                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                        GoldPos = "center";
-                                        telemetry.addData("GoldPos: ", "center");
-                                    }
-                                    else if(recognition.getLabel().equals(LABEL_SILVER_MINERAL)) {
-                                        GoldPos = "left";
-                                        telemetry.addData("GoldPos: ", "left");
-                                    }
-                                }
-                            }
-                        }
-                        telemetry.update();
-                    }
-
-                }
-                if(GoldPos != null) {
-                    if(GoldPos.equals("left")) {
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,-10, -10, 2);
-                        encoderDrive(TURN_SPEED, TURN_SPEED,-3, 6, 0.8);
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,30, 30, 2);
-                        isGoldKnocked = true;
-                    }
-                    else if(GoldPos.equals("right")) {
-                        encoderDrive(TURN_SPEED, TURN_SPEED,4, -4, 0.8);
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,30, 30,2);
-                        isGoldKnocked = true;
-                    }
-                    else if(GoldPos.equals("center")) {
-                        //encoderDrive(DRIVE_SPEED, -4,   -4, 1);
-                        encoderDrive(TURN_SPEED, TURN_SPEED,5, -3, 0.8);
-                        encoderDrive(DRIVE_SPEED, DRIVE_SPEED,25, 25, 2);
-                        isGoldKnocked = true;
-                    }
-                }
-
-            }
-        }
-        if(tfod != null) {
-            tfod.shutdown();
-        }
-        ArmR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ArmR.setPower(0.6);
-        ArmL.setPower(0.6);
-        sleep(300);
         ArmR.setPower(0);
         ArmL.setPower(0);
         telemetry.addData("Path", "Complete");
